@@ -15,7 +15,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
@@ -87,7 +87,7 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
         return entityType;
     }
 
-    private MessagePersistence createUpdateEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
+    private PersistenceMessage createUpdateEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
         var updateEntityTypeMessage = UpdateEntityTypeMessage.builder()
                 .id(entityTypeEntity.getId())
                 .name(entityTypeEntity.getName())
@@ -96,6 +96,6 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
                 .logUpdateDate(entityTypeEntity.getLogUpdateDate())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(updateEntityTypeMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(updateEntityTypeMessage).build();
     }
 }

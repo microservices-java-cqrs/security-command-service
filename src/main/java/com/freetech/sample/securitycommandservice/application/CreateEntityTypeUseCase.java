@@ -4,7 +4,6 @@ import com.freetech.sample.securitycommandservice.application.config.ServiceConf
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
 import com.freetech.sample.securitycommandservice.application.mappers.EntityTypeEntityMapper;
-import com.freetech.sample.securitycommandservice.application.messages.NewEntityTypeMessage;
 import com.freetech.sample.securitycommandservice.application.validations.EntityTypeValidation;
 import com.freetech.sample.securitycommandservice.domain.models.EntityType;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.EntityTypeEntity;
@@ -16,9 +15,13 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.EntityTypeMessage;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -49,7 +52,7 @@ public class CreateEntityTypeUseCase implements CreateEntityTypePort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_CREATE_ENTITY_TYPE.getCode(),
                     ExceptionEnum.ERROR_CREATE_ENTITY_TYPE.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -59,7 +62,7 @@ public class CreateEntityTypeUseCase implements CreateEntityTypePort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_SEND_ENTITY_TYPE.getCode(),
                     ExceptionEnum.ERROR_SEND_ENTITY_TYPE.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -67,8 +70,8 @@ public class CreateEntityTypeUseCase implements CreateEntityTypePort {
         return entityType;
     }
 
-    private MessagePersistence createNewEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
-        var newEntityTypeMessage = NewEntityTypeMessage.builder()
+    private List<PersistenceMessage> createNewEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
+        var newEntityTypeMessage = EntityTypeMessage.builder()
                 .id(entityTypeEntity.getId())
                 .name(entityTypeEntity.getName())
                 .description(entityTypeEntity.getDescription())
@@ -79,6 +82,6 @@ public class CreateEntityTypeUseCase implements CreateEntityTypePort {
                 .logState(entityTypeEntity.getLogState())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(newEntityTypeMessage).build();
+        return Arrays.asList(PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(newEntityTypeMessage).build());
     }
 }

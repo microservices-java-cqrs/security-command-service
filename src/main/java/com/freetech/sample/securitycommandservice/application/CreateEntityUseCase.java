@@ -15,7 +15,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.JsonUtil;
 
@@ -52,8 +52,8 @@ public class CreateEntityUseCase implements CreateEntityPort {
         return entity;
     }
 
-    private MessagePersistence createNewEntityMessage(char operation, EntityEntity entityEntity) {
+    private PersistenceMessage createNewEntityMessage(char operation, EntityEntity entityEntity) {
         var newEntityMessage = NewEntityMessage.builder().build();
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(newEntityMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(newEntityMessage).build();
     }
 }

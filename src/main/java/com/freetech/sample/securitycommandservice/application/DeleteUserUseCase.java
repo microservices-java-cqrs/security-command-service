@@ -17,7 +17,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
@@ -79,7 +79,7 @@ public class DeleteUserUseCase implements DeleteUserPort {
         return user;
     }
 
-    private MessagePersistence createDeleteUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
+    private PersistenceMessage createDeleteUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
         var deleteUserMessage = DeleteUserMessage.builder()
                 .id(userEntity.getId())
                 .logUpdateUser(userEntity.getLogUpdateUser())
@@ -90,6 +90,6 @@ public class DeleteUserUseCase implements DeleteUserPort {
                 .entityLogState(entityEntity.getLogState())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(deleteUserMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(deleteUserMessage).build();
     }
 }

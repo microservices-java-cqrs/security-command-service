@@ -1,6 +1,6 @@
-/*
-package com.freetech.sample.securitycommandservice.application.messages;
+/*package com.freetech.sample.securitycommandservice.application.messages;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.util.Date;
@@ -10,16 +10,14 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @Setter
-public class NewUserMessage {
+public class NewRolMessage {
     private Long id;
-    private Long entityId;
-    private String username;
-    private String password;
-    private String status;
+    private String name;
+    private String description;
     private String logCreationUser;
     private String logUpdateUser;
     private Date logCreationDate;
     private Date logUpdateDate;
-    private Integer logState;
+    private int logState;
 }
 */

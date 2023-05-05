@@ -26,7 +26,12 @@ public enum ExceptionEnum {
     ERROR_NOT_FOUND_ENTITY_TYPE("50034", "TypeEntity not found"),
     ERROR_EXIST_NAME_ENTITY_TYPE("50035", "Name is taken"),
 
-    ERROR_CREATE_ENTITY("50050", "Error creating entity");
+    ERROR_CREATE_ENTITY("50050", "Error creating entity"),
+
+    ERROR_CREATE_ROL("50070", "Error creating rol"),
+    ERROR_SEND_ROL("50073", "Error sending rol"),
+    ERROR_ADD_ROLES_TO_USER("60000", "Error adding roles to user"),
+    ERROR_SEND_ROLES_TO_USER("60001", "Error sending roles to user");
 
     private String code;
     private String message;

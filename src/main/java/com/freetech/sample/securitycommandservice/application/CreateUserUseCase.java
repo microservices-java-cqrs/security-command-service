@@ -4,7 +4,6 @@ import com.freetech.sample.securitycommandservice.application.config.ServiceConf
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.mappers.EntityEntityMapper;
 import com.freetech.sample.securitycommandservice.application.mappers.UserEntityMapper;
-import com.freetech.sample.securitycommandservice.application.messages.NewUserMessage;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
 import com.freetech.sample.securitycommandservice.application.validations.UserValidation;
 import com.freetech.sample.securitycommandservice.domain.models.User;
@@ -19,9 +18,14 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.EntityMessage;
+import messages.PersistenceMessage;
+import messages.UserMessage;
 import org.springframework.http.HttpStatus;
 import utils.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -63,7 +67,7 @@ public class CreateUserUseCase implements CreateUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_CREATE_USER.getCode(),
                     ExceptionEnum.ERROR_CREATE_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -82,10 +86,10 @@ public class CreateUserUseCase implements CreateUserPort {
         return user;
     }
 
-    private MessagePersistence createNewUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
-        var newUserMessage = NewUserMessage.builder()
+    private List<PersistenceMessage> createNewUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
+        var newUserMessage = UserMessage.builder()
                 .id(userEntity.getId())
-                .entityTypeId(entityEntity.getEntityTypeEntity().getId())
+                .entityId(entityEntity.getId())
                 .username(userEntity.getUsername())
                 .password(userEntity.getPassword())
                 .status(userEntity.getStatus())
@@ -94,20 +98,26 @@ public class CreateUserUseCase implements CreateUserPort {
                 .logCreationDate(userEntity.getLogCreationDate())
                 .logUpdateDate(userEntity.getLogUpdateDate())
                 .logState(userEntity.getLogState())
-                .entityId(entityEntity.getId())
-                .entityParentId(entityEntity.getEntityEntity() != null ? entityEntity.getEntityEntity().getId() : null)
-                .entityNumberDocument(entityEntity.getNumberDocument())
-                .entityBussinessName(entityEntity.getBussinessName())
-                .entityName(entityEntity.getName())
-                .entityLastname(entityEntity.getLastname())
-                .entityLogCreationUser(entityEntity.getLogCreationUser())
-                .entityLogUpdateUser(entityEntity.getLogUpdateUser())
-                .entityLogCreationDate(entityEntity.getLogCreationDate())
-                .entityLogUpdateDate(entityEntity.getLogUpdateDate())
-                .entityLogState(entityEntity.getLogState())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(newUserMessage).build();
+        var newEntityMessage = EntityMessage.builder()
+                .id(entityEntity.getId())
+                .parentId(entityEntity.getEntityEntity() != null ? entityEntity.getEntityEntity().getId() : null)
+                .entityTypeId(entityEntity.getEntityTypeEntity().getId())
+                .numberDocument(entityEntity.getNumberDocument())
+                .bussinessName(entityEntity.getBussinessName())
+                .name(entityEntity.getName())
+                .lastname(entityEntity.getLastname())
+                .logCreationUser(entityEntity.getLogCreationUser())
+                .logUpdateUser(entityEntity.getLogUpdateUser())
+                .logCreationDate(entityEntity.getLogCreationDate())
+                .logUpdateDate(entityEntity.getLogUpdateDate())
+                .logState(entityEntity.getLogState())
+                .build();
+
+        return Arrays.asList(
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(newEntityMessage).build(),
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(newUserMessage).build());
     }
 
 }

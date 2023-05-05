@@ -16,7 +16,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
@@ -81,7 +81,7 @@ public class DeleteEntityTypeCaseUse implements DeleteEntityTypePort {
         return entityType;
     }
 
-    private MessagePersistence createDeleteEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
+    private PersistenceMessage createDeleteEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
         var deleteEntityTypeMessage = DeleteEntityTypeMessage.builder()
                 .id(entityTypeEntity.getId())
                 .logUpdateUser(entityTypeEntity.getLogUpdateUser())
@@ -89,6 +89,6 @@ public class DeleteEntityTypeCaseUse implements DeleteEntityTypePort {
                 .logState(entityTypeEntity.getLogState())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(deleteEntityTypeMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(deleteEntityTypeMessage).build();
     }
 }

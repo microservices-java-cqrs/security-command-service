@@ -49,7 +49,7 @@ class UserControllerTest {
         var newUserDtoMock = new NewUserDto();
         newUserDtoMock.setEntityTypeId(4L);
         newUserDtoMock.setEntityName("Fiorella Yahaira");
-        newUserDtoMock.setEntityLastName("Gomez Monteagudo");
+        newUserDtoMock.setEntityLastname("Gomez Monteagudo");
         newUserDtoMock.setUsername("fgomez");
         newUserDtoMock.setPassword("micronics");
         newUserDtoMock.setStatus("CREATED");
@@ -65,7 +65,7 @@ class UserControllerTest {
         var updateUserDtoMock = new UpdateUserDto();
         updateUserDtoMock.setEntityTypeId(4L);
         updateUserDtoMock.setEntityName("Fiorella Yahaira");
-        updateUserDtoMock.setEntityLastName("Gomez Monteagudo");
+        updateUserDtoMock.setEntityLastname("Gomez Monteagudo");
         updateUserDtoMock.setUsername("fgomez");
         updateUserDtoMock.setStatus("CREATED");
 

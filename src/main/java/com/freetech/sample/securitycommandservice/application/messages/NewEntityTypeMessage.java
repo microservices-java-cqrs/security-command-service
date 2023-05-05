@@ -1,4 +1,4 @@
-package com.freetech.sample.securitycommandservice.application.messages;
+/*package com.freetech.sample.securitycommandservice.application.messages;
 
 import lombok.*;
 
@@ -19,3 +19,4 @@ public class NewEntityTypeMessage {
     private Date logUpdateDate;
     private Integer logState;
 }
+*/

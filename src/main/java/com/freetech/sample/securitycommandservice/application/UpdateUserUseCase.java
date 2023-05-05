@@ -17,7 +17,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
@@ -102,7 +102,7 @@ public class UpdateUserUseCase implements UpdateUserPort {
         return user;
     }
 
-    private MessagePersistence createUpdateUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
+    private PersistenceMessage createUpdateUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
         var updateUserMessage = UpdateUserMessage.builder()
                 .id(userEntity.getId())
                 .entityTypeId(entityEntity.getEntityTypeEntity().getId())
@@ -118,7 +118,7 @@ public class UpdateUserUseCase implements UpdateUserPort {
                 .entityLogUpdateDate(entityEntity.getLogUpdateDate())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(updateUserMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(updateUserMessage).build();
     }
 
 }

@@ -16,7 +16,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import messages.MessagePersistence;
+import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
@@ -70,7 +70,7 @@ public class ChangePasswordUseCase implements ChangePasswordPort {
         return user;
     }
 
-    private MessagePersistence createChangePasswordMessage(char operation, UserEntity userEntity) {
+    private PersistenceMessage createChangePasswordMessage(char operation, UserEntity userEntity) {
         var changePasswordMessage = ChangePasswordMessage
                 .builder()
                 .id(userEntity.getId())
@@ -79,6 +79,6 @@ public class ChangePasswordUseCase implements ChangePasswordPort {
                 .logUpdateDate(userEntity.getLogUpdateDate())
                 .build();
 
-        return MessagePersistence.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(changePasswordMessage).build();
+        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(changePasswordMessage).build();
     }
 }

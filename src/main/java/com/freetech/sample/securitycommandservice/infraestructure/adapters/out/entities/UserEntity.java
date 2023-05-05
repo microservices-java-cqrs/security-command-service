@@ -9,6 +9,7 @@ import lombok.Setter;
 import utils.DateUtil;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -49,6 +50,9 @@ public class UserEntity {
 
     @Column(name = "log_state", nullable = false)
     private int logState;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserRolEntity> roles;
 
     @PrePersist
     public void prePersist() {
