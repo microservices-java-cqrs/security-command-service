@@ -59,7 +59,7 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_UPDATE_ENTITY_TYPE.getCode(),
                     ExceptionEnum.ERROR_UPDATE_ENTITY_TYPE.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -69,7 +69,7 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_SEND_ENTITY_TYPE.getCode(),
                     ExceptionEnum.ERROR_SEND_ENTITY_TYPE.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -82,8 +82,11 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
                 .id(entityTypeEntity.getId())
                 .name(entityTypeEntity.getName())
                 .description(entityTypeEntity.getDescription())
+                .logCreationUser(entityTypeEntity.getLogCreationUser())
                 .logUpdateUser(entityTypeEntity.getLogUpdateUser())
+                .logCreationDate(entityTypeEntity.getLogCreationDate())
                 .logUpdateDate(entityTypeEntity.getLogUpdateDate())
+                .logState(entityTypeEntity.getLogState())
                 .build();
 
         return Arrays.asList(PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(updateEntityTypeMessage).build());

@@ -4,6 +4,7 @@ import com.freetech.sample.securitycommandservice.application.config.ServiceConf
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
 import com.freetech.sample.securitycommandservice.application.mappers.UserRolEntityMapper;
+import com.freetech.sample.securitycommandservice.application.validations.UserValidation;
 import com.freetech.sample.securitycommandservice.domain.models.UserRol;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.UserRolEntity;
 import com.freetech.sample.securitycommandservice.infraestructure.ports.in.AddRolesToUserPort;
@@ -28,10 +29,13 @@ public class AddRolesToUserUseCase implements AddRolesToUserPort {
     private final EntityRepository entityRepository;
     private final EventMessage eventMessage;
     private final ServiceConfig serviceConfig;
+    private final UserValidation userValidation;
 
     @Transactional
     @Override
     public void addRolesToUser(Long id, List<UserRol> userRoles) {
+        userValidation.validateAddRolesToUser(id);
+
         String messagePersistence = "";
         try {
             List<PersistenceMessage> listPersistenceMessage = new ArrayList<>();

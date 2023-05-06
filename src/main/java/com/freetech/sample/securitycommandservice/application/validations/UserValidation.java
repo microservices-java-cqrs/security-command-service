@@ -172,4 +172,16 @@ public class UserValidation {
                     ExceptionEnum.ERROR_PASSWORD_INCORRECT_USER.getMessage(),
                     HttpStatus.NOT_FOUND);
     }
+
+    public void validateAddRolesToUser(Long id) {
+        var userEntity = entityRepository.getByField(
+                "id", id, UserEntity.class);
+
+        if (userEntity == null)
+            throw new BussinessException(
+                    ExceptionEnum.ERROR_NOT_FOUND_USER.getCode(),
+                    ExceptionEnum.ERROR_NOT_FOUND_USER.getMessage(),
+                    ExceptionEnum.ERROR_NOT_FOUND_USER.getMessage(),
+                    HttpStatus.NOT_FOUND);
+    }
 }

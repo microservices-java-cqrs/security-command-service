@@ -54,7 +54,7 @@ public class CommandUserController {
     @RequestMapping(value = "/new-password", method = RequestMethod.PUT)
     public ResponseEntity changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto) {
         var user = UserMapper.toDomain(changePasswordDto);
-        user.setLogUsername("lamat@gmail.com");
+        user.setLogUsername("mguayapa@gmail.com");
         changePasswordPort.changePassword(user);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }

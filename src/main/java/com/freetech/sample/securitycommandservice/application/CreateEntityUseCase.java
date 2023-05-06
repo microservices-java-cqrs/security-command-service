@@ -4,7 +4,6 @@ import com.freetech.sample.securitycommandservice.application.config.ServiceConf
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
 import com.freetech.sample.securitycommandservice.application.mappers.EntityEntityMapper;
-import com.freetech.sample.securitycommandservice.application.messages.NewEntityMessage;
 import com.freetech.sample.securitycommandservice.application.validations.EntityValidation;
 import com.freetech.sample.securitycommandservice.domain.models.Entity;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.EntityEntity;
@@ -15,6 +14,7 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import messages.EntityMessage;
 import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.JsonUtil;
@@ -45,7 +45,7 @@ public class CreateEntityUseCase implements CreateEntityPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_CREATE_ENTITY.getCode(),
                     ExceptionEnum.ERROR_CREATE_ENTITY.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -53,7 +53,7 @@ public class CreateEntityUseCase implements CreateEntityPort {
     }
 
     private PersistenceMessage createNewEntityMessage(char operation, EntityEntity entityEntity) {
-        var newEntityMessage = NewEntityMessage.builder().build();
+        var newEntityMessage = EntityMessage.builder().build();
         return PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(newEntityMessage).build();
     }
 }

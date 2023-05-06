@@ -3,7 +3,6 @@ package com.freetech.sample.securitycommandservice.application;
 import com.freetech.sample.securitycommandservice.application.config.ServiceConfig;
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
-import com.freetech.sample.securitycommandservice.application.messages.UpdateUserMessage;
 import com.freetech.sample.securitycommandservice.application.validations.UserValidation;
 import com.freetech.sample.securitycommandservice.domain.models.User;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.EntityEntity;
@@ -17,10 +16,15 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import messages.EntityMessage;
 import messages.PersistenceMessage;
+import messages.UserMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -83,7 +87,7 @@ public class UpdateUserUseCase implements UpdateUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_UPDATE_USER.getCode(),
                     ExceptionEnum.ERROR_UPDATE_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -94,7 +98,7 @@ public class UpdateUserUseCase implements UpdateUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_SEND_USER.getCode(),
                     ExceptionEnum.ERROR_SEND_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -102,23 +106,39 @@ public class UpdateUserUseCase implements UpdateUserPort {
         return user;
     }
 
-    private PersistenceMessage createUpdateUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
-        var updateUserMessage = UpdateUserMessage.builder()
+    private List<PersistenceMessage> createUpdateUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
+        var updateUserMessage = UserMessage.builder()
                 .id(userEntity.getId())
-                .entityTypeId(entityEntity.getEntityTypeEntity().getId())
+                .entityId(entityEntity.getId())
                 .username(userEntity.getUsername())
+                .password(userEntity.getPassword())
                 .status(userEntity.getStatus())
+                .logCreationUser(userEntity.getLogCreationUser())
                 .logUpdateUser(userEntity.getLogUpdateUser())
+                .logCreationDate(userEntity.getLogCreationDate())
                 .logUpdateDate(userEntity.getLogUpdateDate())
-                .entityNumberDocument(entityEntity.getNumberDocument())
-                .entityBussinessName(entityEntity.getBussinessName())
-                .entityName(entityEntity.getName())
-                .entityLastname(entityEntity.getLastname())
-                .entityLogUpdateUser(entityEntity.getLogUpdateUser())
-                .entityLogUpdateDate(entityEntity.getLogUpdateDate())
+                .logState(userEntity.getLogState())
                 .build();
 
-        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(updateUserMessage).build();
+        var updateEntityMessage = EntityMessage.builder()
+                .id(entityEntity.getId())
+                .parentId(entityEntity.getEntityEntity() != null ? entityEntity.getEntityEntity().getId() : null)
+                .entityTypeId(entityEntity.getEntityTypeEntity().getId())
+                .numberDocument(entityEntity.getNumberDocument())
+                .bussinessName(entityEntity.getBussinessName())
+                .name(entityEntity.getName())
+                .lastname(entityEntity.getLastname())
+                .logCreationUser(entityEntity.getLogCreationUser())
+                .logUpdateUser(entityEntity.getLogUpdateUser())
+                .logCreationDate(entityEntity.getLogCreationDate())
+                .logUpdateDate(entityEntity.getLogUpdateDate())
+                .logState(entityEntity.getLogState())
+                .build();
+
+        return Arrays.asList(
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(updateEntityMessage).build(),
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(updateUserMessage).build()
+        );
     }
 
 }

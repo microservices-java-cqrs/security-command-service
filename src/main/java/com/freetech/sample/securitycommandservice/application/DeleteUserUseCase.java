@@ -3,7 +3,6 @@ package com.freetech.sample.securitycommandservice.application;
 import com.freetech.sample.securitycommandservice.application.config.ServiceConfig;
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
-import com.freetech.sample.securitycommandservice.application.messages.DeleteUserMessage;
 import com.freetech.sample.securitycommandservice.application.validations.UserValidation;
 import com.freetech.sample.securitycommandservice.domain.models.User;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.EntityEntity;
@@ -17,10 +16,15 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import messages.EntityMessage;
 import messages.PersistenceMessage;
+import messages.UserMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -61,7 +65,7 @@ public class DeleteUserUseCase implements DeleteUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_DELETE_USER.getCode(),
                     ExceptionEnum.ERROR_DELETE_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -72,24 +76,44 @@ public class DeleteUserUseCase implements DeleteUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_SEND_USER.getCode(),
                     ExceptionEnum.ERROR_SEND_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
         return user;
     }
 
-    private PersistenceMessage createDeleteUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
-        var deleteUserMessage = DeleteUserMessage.builder()
+    private List<PersistenceMessage> createDeleteUserMessage(char operation, EntityEntity entityEntity, UserEntity userEntity) {
+        var deleteUserMessage = UserMessage.builder()
                 .id(userEntity.getId())
+                .entityId(entityEntity.getId())
+                .username(userEntity.getUsername())
+                .password(userEntity.getPassword())
+                .status(userEntity.getStatus())
+                .logCreationUser(userEntity.getLogCreationUser())
                 .logUpdateUser(userEntity.getLogUpdateUser())
+                .logCreationDate(userEntity.getLogCreationDate())
                 .logUpdateDate(userEntity.getLogUpdateDate())
                 .logState(userEntity.getLogState())
-                .entityLogUpdateUser(entityEntity.getLogUpdateUser())
-                .entityLogUpdateDate(entityEntity.getLogUpdateDate())
-                .entityLogState(entityEntity.getLogState())
                 .build();
 
-        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(deleteUserMessage).build();
+        var deleteEntityMessage = EntityMessage.builder()
+                .id(entityEntity.getId())
+                .parentId(entityEntity.getEntityEntity() != null ? entityEntity.getEntityEntity().getId() : null)
+                .entityTypeId(entityEntity.getEntityTypeEntity().getId())
+                .numberDocument(entityEntity.getNumberDocument())
+                .bussinessName(entityEntity.getBussinessName())
+                .name(entityEntity.getName())
+                .lastname(entityEntity.getLastname())
+                .logCreationUser(entityEntity.getLogCreationUser())
+                .logUpdateUser(entityEntity.getLogUpdateUser())
+                .logCreationDate(entityEntity.getLogCreationDate())
+                .logUpdateDate(entityEntity.getLogUpdateDate())
+                .logState(entityEntity.getLogState())
+                .build();
+
+        return Arrays.asList(
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITIES.getValue()).message(deleteEntityMessage).build(),
+                PersistenceMessage.builder().operation(operation).tableName(TableEnum.USERS.getValue()).message(deleteUserMessage).build());
     }
 }
