@@ -4,7 +4,6 @@ import com.freetech.sample.securitycommandservice.application.config.ServiceConf
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
 import com.freetech.sample.securitycommandservice.application.mappers.UserRolEntityMapper;
-import com.freetech.sample.securitycommandservice.application.messages.NewUserRolMessage;
 import com.freetech.sample.securitycommandservice.domain.models.UserRol;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.UserRolEntity;
 import com.freetech.sample.securitycommandservice.infraestructure.ports.in.AddRolesToUserPort;
@@ -16,6 +15,7 @@ import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import messages.PersistenceMessage;
+import messages.UserRolMessage;
 import org.springframework.http.HttpStatus;
 import utils.JsonUtil;
 
@@ -56,14 +56,14 @@ public class AddRolesToUserUseCase implements AddRolesToUserPort {
             throw new BussinessException(
                     ExceptionEnum.ERROR_SEND_ROLES_TO_USER.getCode(),
                     ExceptionEnum.ERROR_SEND_ROLES_TO_USER.getMessage(),
-                    ex.getMessage() + " --> " + ex.getCause().getMessage(),
+                    ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
 
     private PersistenceMessage createNewUserRolMessage(char operation, UserRolEntity userRolEntity) {
-        var newUserRolMessage = NewUserRolMessage.builder()
+        var newUserRolMessage = UserRolMessage.builder()
                 .id(userRolEntity.getId())
                 .userId(userRolEntity.getUserEntity().getId())
                 .rolId(userRolEntity.getRolEntity().getId())

@@ -3,7 +3,6 @@ package com.freetech.sample.securitycommandservice.application;
 import com.freetech.sample.securitycommandservice.application.config.ServiceConfig;
 import com.freetech.sample.securitycommandservice.application.enums.ExceptionEnum;
 import com.freetech.sample.securitycommandservice.application.exceptions.BussinessException;
-import com.freetech.sample.securitycommandservice.application.messages.UpdateEntityTypeMessage;
 import com.freetech.sample.securitycommandservice.application.validations.EntityTypeValidation;
 import com.freetech.sample.securitycommandservice.domain.models.EntityType;
 import com.freetech.sample.securitycommandservice.infraestructure.adapters.out.entities.EntityTypeEntity;
@@ -15,10 +14,14 @@ import enums.TableEnum;
 import interfaces.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import messages.EntityTypeMessage;
 import messages.PersistenceMessage;
 import org.springframework.http.HttpStatus;
 import utils.DateUtil;
 import utils.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -32,19 +35,6 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
     @Override
     public EntityType updateEntityType(EntityType entityType) {
         entityTypeValidation.validateUpdateEntityType(entityType);
-        /*var entityTypeEntity = entityRepository.getByField(
-                "id", entityType.getId(), EntityTypeEntity.class
-        );
-
-        EntityTypeValidation.validateEntityType(entityTypeEntity);
-
-        var entityTypeEntityExist = entityRepository.getByField(
-                "name", entityType.getName(), EntityTypeEntity.class
-        );
-
-        if (entityTypeEntityExist != null
-                && entityTypeEntityExist.getId().intValue() != entityTypeEntity.getId())
-            EntityTypeValidation.validateName(entityTypeEntityExist);*/
 
         String messagePersistence = "";
         try {
@@ -87,8 +77,8 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
         return entityType;
     }
 
-    private PersistenceMessage createUpdateEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
-        var updateEntityTypeMessage = UpdateEntityTypeMessage.builder()
+    private List<PersistenceMessage> createUpdateEntityTypeMessage(char operation, EntityTypeEntity entityTypeEntity) {
+        var updateEntityTypeMessage = EntityTypeMessage.builder()
                 .id(entityTypeEntity.getId())
                 .name(entityTypeEntity.getName())
                 .description(entityTypeEntity.getDescription())
@@ -96,6 +86,6 @@ public class UpdateEntityTypeUseCase implements UpdateEntityTypePort {
                 .logUpdateDate(entityTypeEntity.getLogUpdateDate())
                 .build();
 
-        return PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(updateEntityTypeMessage).build();
+        return Arrays.asList(PersistenceMessage.builder().operation(operation).tableName(TableEnum.ENTITY_TYPES.getValue()).message(updateEntityTypeMessage).build());
     }
 }

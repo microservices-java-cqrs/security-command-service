@@ -1,4 +1,4 @@
-package com.freetech.sample.securitycommandservice.application.messages;
+/*package com.freetech.sample.securitycommandservice.application.messages;
 
 import lombok.*;
 
@@ -11,4 +11,4 @@ public class NewUserRolMessage {
     private Long id;
     private Long userId;
     private Long rolId;
-}
+}*/

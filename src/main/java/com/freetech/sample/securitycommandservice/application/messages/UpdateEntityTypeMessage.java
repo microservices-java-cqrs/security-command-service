@@ -1,4 +1,4 @@
-package com.freetech.sample.securitycommandservice.application.messages;
+/*package com.freetech.sample.securitycommandservice.application.messages;
 
 import lombok.*;
 
@@ -16,3 +16,4 @@ public class UpdateEntityTypeMessage {
     private String logUpdateUser;
     private Date logUpdateDate;
 }
+*/
